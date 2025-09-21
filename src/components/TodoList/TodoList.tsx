@@ -2,13 +2,13 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Todo } from '../../types/Todo';
-import { currentTodoSlice } from '../../features/currentTodo';
+import { setCurrentTodo } from '../../features/currentTodo';
 
 export const TodoList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const todos = useAppSelector(state => state.todos);
+  const todos = useAppSelector(state => state.todos.items);
   const { query, status } = useAppSelector(state => state.filter);
-  const currentTodo = useAppSelector(state => state.currentTodo);
+  const currentTodo = useAppSelector(state => state.currentTodo.todo);
 
   const filteredTodos = todos.filter(todo => {
     const matchesQuery = todo.title.toLowerCase().includes(query.toLowerCase());
@@ -21,7 +21,7 @@ export const TodoList: React.FC = () => {
   });
 
   const selectedTodo = (todo: Todo) => {
-    dispatch(currentTodoSlice.actions.setCurrentTodo(todo));
+    dispatch(setCurrentTodo(todo));
   };
 
   if (filteredTodos.length === 0) {
@@ -51,7 +51,7 @@ export const TodoList: React.FC = () => {
         </thead>
 
         <tbody>
-          {filteredTodos.map((todo, index) => (
+          {filteredTodos.map(todo => (
             <tr
               data-cy="todo"
               key={todo.id}

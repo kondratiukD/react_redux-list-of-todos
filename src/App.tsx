@@ -2,7 +2,7 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { Loader, TodoFilter, TodoList, TodoModal } from './components';
 import { useEffect } from 'react';
-import { todosSlice } from './features/todos';
+import { setTodos, setLoading } from './features/todos';
 import { getTodos } from './api';
 import { useAppDispatch } from './app/hooks';
 
@@ -10,9 +10,17 @@ export const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getTodos().then(todo => {
-      dispatch(todosSlice.actions.setTodos(todo));
-    });
+    dispatch(setLoading(true));
+    getTodos()
+      .then(todos => {
+        dispatch(setTodos(todos));
+      })
+      .catch(() => {
+        // Handle error silently - could dispatch error action or show notification
+      })
+      .finally(() => {
+        dispatch(setLoading(false));
+      });
   }, [dispatch]);
 
   return (
